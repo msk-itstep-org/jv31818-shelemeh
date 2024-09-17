@@ -1,21 +1,34 @@
 package org.itstep.msk.app.entity;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.util.Objects;
 import java.util.Set;
-
+@Data
 @Entity
-@Table( name = "roles")
+@Table( name = "role")
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(unique = true,nullable = false)
     private Integer id;
 
     @Column(name = "name")
     private String name;
 
 
-    @ManyToMany(targetEntity = Role.class,cascade = CascadeType.ALL)
+   @ManyToMany(mappedBy = "roles" ,cascade =  CascadeType.ALL , fetch =  FetchType.LAZY)
+   @JsonIgnore
     private Set<Customer> custom ;
 
     @Override
@@ -23,7 +36,6 @@ public class Role {
         return "Role{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", custom=" + custom +
                 '}';
     }
 
@@ -33,14 +45,12 @@ public class Role {
         if (!(o instanceof Role))
             return false;
         final Role role = (Role) o;
-        return Objects.equals(this.id, role.id) &&
-                Objects.equals(this.name, role.name) &&
-                Objects.equals(this.custom, role.custom);
+        return Objects.equals(this.id, role.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id, this.name, this.custom);
+        return Objects.hash(this.id, this.name);
     }
 
     public Role() {
@@ -49,7 +59,6 @@ public class Role {
     public Integer getId() {
         return this.id;
     }
-
 
     public String getName() {
         return this.name;

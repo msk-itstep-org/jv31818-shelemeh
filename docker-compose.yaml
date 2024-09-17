@@ -1,0 +1,51 @@
+version: '3'
+networks:
+  outside-nw:
+    external: true
+services:
+  application:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 8090
+      - 5701
+    environment:
+      SPRING_DATASOURCE_URL: 'jdbc:mysql://database:3307/testdb'
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_FLYWAY_URL: 'jdbc:mysql://database:3307/testdb'
+      SPRING_FLYWAY_USER: root
+      SPRING_FLYWAY_PASSWORD: password
+    networks:
+      - outside-nw
+    depends_on:
+      - database
+    restart: always
+
+  grafana:
+    image: grafana/grafana:7.5.7
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+
+
+  database:
+        image: 'mysql:8.0.21'
+        mem_reservation: 512m
+        environment:
+          MYSQL_DATABASE: db
+          MYSQL_USER: root
+          MYSQL_PASSWORD: password
+        ports:
+          - '3307:3306'
+        healthcheck:
+          test: "usr/bin/database --user=root --password=password --execute \"SHOW DATABASES;\""
+          interval: 5s
+          timeout: 2s
+          retries: 60
+        volumes:
+          - ~/data/mysql8:/var/lib/mysql
+
+        networks:
+          - outside-nw

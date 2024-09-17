@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th = "http://www.thymeleaf.org" >
+
+<head>
+    <meta http-equiv="Content-Type " content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale= 1.0, minimum-scale=1.0">
+    <script type="text/javascript" th:src="@{https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js}"></script>
+    <link rel="stylesheet " type="text/css" th:href="@{https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css}"   crossorigin="anonymous" />
+
+</head>
+<body>
+<h1>
+    <div th:if="${message != null}" class="alert alert-success text-center">
+        [[${message}]]
+    </div>
+</h1>
+
+<div>
+<h2 class="alert-success text-center">Регистрация прошла успешно!!!</h2>
+</div>
+
+    <div>
+        <table class="table  table-bordered table-hover table-responsive-xl">
+            <thead class="thead-dark">
+                <tr>
+                    <th class="h3 module-graph">Customer ID</th>
+                        <th>
+                            <a>Customer name</a>
+                        </th>
+                            <th>Customer password</th>
+                            <th>Customer email<th>
+                            </tr>
+
+            </thead>
+                <tbody>
+                    <tr th:each="customer : ${customer}">
+                        <td>[[${customer.id}]]</td>
+                        <td>[[${customer.name}]]</td>
+                        <td>[[${customer.password}]]</td>
+                        <td>[[${customer.email}]]</td>
+                </tr>
+                </tbody>
+        </table>
+    </div>
+<div>
+    <form method="post" th:action="@{/logout}"th:hidden="true", name="logoutForm">
+<input type="submit" />
+    </form>
+</div>
+    <div class="dropdown-menu">
+        <a class="dropdown-item" id="logoutlink" href="">Logout</a>
+
+    </div>
+
+<script type="text/javascript">
+    $(document).ready(function (){
+        $("#logoutlink").on("click",function (e) {
+            e.preventDefault();
+            document.logoutForm.onsubmit;
+
+        });
+    });
+    </script>
+
+</body>
+</html>

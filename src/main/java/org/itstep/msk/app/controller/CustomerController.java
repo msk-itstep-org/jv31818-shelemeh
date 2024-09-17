@@ -1,45 +1,72 @@
 package org.itstep.msk.app.controller;
 
+import io.swagger.annotations.ApiOperation;
 import org.itstep.msk.app.entity.Customer;
-import org.itstep.msk.app.entity.Product;
-import org.itstep.msk.app.repository.ProductRepository;
-import org.itstep.msk.app.service.ServiceCustomImp;
+import org.itstep.msk.app.service.ServiceCustomer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Optional;
 
-@Controller
+/*
+ * @author shele
+ */
+
+@RestController
+@RequestMapping(value = "/customers")
 public class CustomerController {
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ServiceCustomer serviceCustomer;
 
     @Autowired
-    private ServiceCustomImp serviceCustomImp;
-
-    @GetMapping("/register")
-    private String register(){
-        return "register";
+    public CustomerController(ServiceCustomer serviceCustomer) {
+        this.serviceCustomer = serviceCustomer;
     }
 
-    @PostMapping("/register{id}")
-    public String succesregister(@PathVariable Integer id){
 
-       serviceCustomImp.findCustomerOnId();
-
-        return "register";
+    //Get from Customer credentials as name ,password
+    @GetMapping("/{id}")
+    @ApiOperation(value = "This method get customer by item id")
+    public Optional<Customer> retrieveCustomer(@PathVariable Integer id) {
+        return serviceCustomer.findById(id);
     }
 
-    @GetMapping("/listproduct")
-    public String listProducts(){
-        List<Product> productList = productRepository.findAll();
+    //Get customer by name , email
+    @GetMapping("/{name}")
+    public Customer findByName(@PathVariable String name) {
+        return serviceCustomer.getCustomerByName(name);
+    }
 
-        return "listproduct";
+
+    //Update customer should return a new Customer with  replacing name , email
+    @PutMapping("/{id}")
+    @ApiOperation(value = "This method for changing customer`s email and name")
+    public Customer updateCustomer(@RequestBody Customer customer
+            , @PathVariable Integer id) {
+        return serviceCustomer.changeCustomerEmailAndName(id);
 
     }
+
+    //Should  delete customer from db  by customer's id
+    @DeleteMapping("/{id}")
+    @ApiOperation(value = "This method delete customer by item id")
+    public void removeCustomer(@PathVariable Integer id) {
+        serviceCustomer.deleteCustomerById(id);
+    }
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

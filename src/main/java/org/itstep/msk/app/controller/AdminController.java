@@ -1,71 +1,53 @@
 package org.itstep.msk.app.controller;
 
-import jdk.net.SocketFlow;
-import org.apache.tomcat.jni.Status;
+
 import org.itstep.msk.app.entity.Customer;
 import org.itstep.msk.app.entity.Product;
-import org.itstep.msk.app.enums.AppRoles;
-import org.itstep.msk.app.repository.ProductRepository;
 import org.itstep.msk.app.service.AdminServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
-@Controller
+
+@RestController
+@RequestMapping(value = "/admin", produces = "application/json")
 public class AdminController {
 
+    private final AdminServiceImp adminServiceImp;
 
     @Autowired
-    private AdminServiceImp adminServiceImp;
-
-    @GetMapping("/panel")
-    public String seachAllCustomer(){
-
-        return "panel";
-
+    public AdminController(AdminServiceImp adminServiceImp) {
+        this.adminServiceImp = adminServiceImp;
     }
 
-    @PostMapping("/panel")
-    @ResponseBody
-    public String enterInAdminka(){
-        adminServiceImp.findAllCustomer();
-
-        return "redirect:/panel";
+    @GetMapping("/panel")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String getAdminBar(@RequestBody Customer customer, @RequestParam String name, @RequestParam String password,
+                                   Model model) {
+        model.addAttribute("panel", customer);
+        return "panel";
 
 
     }
 
     @PutMapping("/admin/update")
-    @ResponseBody
-    public String changeProduct(@PathVariable String name){
-        adminServiceImp.updateProduct(name);
-
-
-        return "Ok";
-
-    }
-
-
-    @DeleteMapping("/admin/delete{id}")
-    @ResponseBody
-    public String deleteCustomer( @PathVariable Integer id){
-        adminServiceImp.deleteCustomerOnDate();
-        if (deleteCustomer(id) == null){
-            adminServiceImp.findAllCustomer();
-        }else {
-            throw new RuntimeException("Customer not found");
+    public Product changeProduct(@RequestBody Product prod, @RequestParam String name) {
+        if (prod.getId()==0 && !name.isEmpty()) {
+            return adminServiceImp.updateProduct(name);
         }
-           return "Customer have been deleted";
-
+        throw new DataIntegrityViolationException("not such fields exists");
     }
 
 
+    @DeleteMapping("/admin/delete/{id}")
+    public void deleteCustomer(@PathVariable Integer id) {
+        adminServiceImp.deleteCustomer(id);
 
-
+    }
 
 
 }

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th = "http://www.thymeleaf.org">
+<html xmlns:th = "http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
-    <meta charset="UTF-8">
+    <a href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"></a>
+    <meta http-equiv="Content-Type " content="text/html; charset=UTF-8">
     <title>Cписок всех товаров</title>
 </head>
 
@@ -9,14 +10,21 @@
 
 <!--/*@thymesVar id="product" type=""*/-->
 <div>
-    <td th:object="${product}">
-        <tr >Название продукта</tr>
-        <tr> Цена товара</tr>
-        </td>
+    <form  th:action="@{/customers}" th:object="${product}" method="POST"><br/>>
+           <table>
+               <td>
+
+               </td>
+           </table>
+    </form>
 </div>
 
-<a th:href="@{/register}"> Зарегаться</a>
-
+<div>
+    <span>
+  <p>New one? Come to below
+      <a th:href = "@{/register}">по ссылке</a>зарегистрироваться.</p>
+    </span>
+</div>
 
 
 

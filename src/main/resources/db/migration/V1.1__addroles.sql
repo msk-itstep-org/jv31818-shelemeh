@@ -1,68 +1,129 @@
-create table customer (
-          id  int  unsigned not null auto_increment primary key
-          references  product(id),
-          name varchar(100) not null,
-          email varchar (100) not null,
-          phone varchar (10) not null,
-          password varchar (10) not null
+create table if not exists customer
+(
+    id integer unsigned not null auto_increment primary key
+    references product
+(
+    id
+) on delete cascade,
+    name varchar
+(
+    20
+) not null,
+    email varchar
+(
+    20
+),
+    phone varchar
+(
+    20
+),
+    password varchar
+(
+    10
+) not null,
+    reset_password_token varchar
+(
+    20
+),
+    code varchar
+(
+    100
+)
 
-);
+    );
 
-create table product (
-        id int  unsigned not null auto_increment primary key
-        references customer(id),
-        name_product varchar (100) not null,
-        final_price double (10,0) not null
+create table if not exists product
+(
+    id integer unsigned not null auto_increment primary key
+    references customer
+(
+    id
+),
+    name_product varchar
+(
+    100
+) not null,
+    final_price double
+(
+    10,
+    0
+) not null
 
-
-
-
-
-);
-
-create table checklist (
-        id int  unsigned not null auto_increment primary key,
-         address varchar (1000) not null,
-        manager varchar (1000) not null
-
-
-
-
-);
-
-create table dogs_goods (
-        id int  unsigned  not null auto_increment primary key,
-
-        name_product varchar(1000) not null,
-        quality varchar(100) not null
-
-  );
-
-create table category_product(
-dogs_goods_id int not null references dogs_goods(id),
-product_id int not null references  product(id),
-
-primary key (dogs_goods_id,product_id)
-
-
-
-);
-
-create table roles (
-id integer not null auto_increment primary key,
-name varchar (100) not null
-
-
-);
-
-create table custom_roles(
-customer_id integer not null references customer(id),
-roles_id integer  not null references roles(id),
-
-primary key (customer_id,roles_id)
+    );
 
 
-);
+
+create table if not exists role
+(
+    id
+    integer
+    unsigned
+    not
+    null
+    auto_increment
+    primary
+    key,
+    name
+    varchar
+(
+    100
+) not null
+
+
+    );
+
+create table if not exists custom_roles
+(
+    customer_id integer not null references role
+(
+    id
+),
+    roles_id integer not null references customer
+(
+    id
+),
+    primary key auto_increment
+(
+    customer_id,
+    roles_id
+)
+    );
+
+create table if not exists cart
+(
+    id
+    integer
+    not
+    null
+    auto_increment
+    primary
+    key,
+    prod_list
+    varchar
+(
+    100
+)
+
+    );
+
+create table if not exists category
+(
+    id integer not null auto_increment primary key
+    references product
+(
+    id
+),
+    category_name varchar
+(
+    100
+) not null,
+    image varchar
+(
+    20
+)
+    );
+
+
 
 
 

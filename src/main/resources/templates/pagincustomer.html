@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html  xmlns:th = "http://www.thymeleaf.org">
+<head>
+    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale= 1.0, minimum-scale=1.0">
+    <script type="text/javascript" th:src="@{https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js}"></script>
+    <link rel="stylesheet " type="text/css" th:href="@{https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css}"   crossorigin="anonymous" />
+    <title></title>
+</head>
+
+<body>
+<h1 class="h3 flex-header">
+    List of Customers :
+</h1>
+<div>
+    <table class="table  table-bordered table-hover table-responsive-xl">
+        <thead class="thead-dark">
+        <tr>
+            <th class="h3 module-graph">Customer ID</th>
+            <th>
+                <a th:if="${sortField!='name'}"
+                th:href="@{'/register/page' + ${currentpage}+ '?sortField=name&sortDir='+ ${sortDir}}">Customer name</a>
+                <span th:if="${sortField=='name'}"
+                      th:class="${sortDir =='asc'? 'fas fa-sort-up':'fas fa-sort-down'}"
+                ></span>
+
+
+            </th>
+            <th>Customer password</th>
+            <th>Customer email<th>
+        </tr>
+
+        </thead>
+        <tbody>
+        <!--/*@thymesVar id="customer" type=""*/-->
+        <tr th:each="customer : ${customer}">
+            <td>[[${customer.id}]]</td>
+            <td>[[${customer.name}]]</td>
+            <td>[[${customer.password}]]</td>
+            <td>[[${customer.email}]]</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="text-center m-1" th:if="${totalItem>0}">
+    <span> Showing customers # [[${firstcount}]] to [[${secodcount}]] to [[${totalItem}]]</span>>
+</div>
+<div class="text-center m-1" th:unless="${totalItem>0}">
+    <span>No such customer found!</span>
+</div>
+
+<div>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item">
+                <a class="page-link" th:href="@{/register/page/1}">First</a></li>
+            <li class="page-item">
+                <a class="page-link" th:href="@{'/register/page' + ${currentpage - 1}}">Previous</a></li>
+            <li th:class="${currentpage != i ? 'page-item': 'page-item-active'}"
+                th:each="i:${#numbers.sequence(1,totalPage)}">
+                <a class="page-link" th:href="@{'/register/page' + ${i}}">[[${i}]]</a></li>
+            <li>
+                <a class="page-link" th:href="@{'/register/page' + ${currentpage + 1}}">Next</a></li>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>

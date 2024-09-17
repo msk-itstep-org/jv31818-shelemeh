@@ -1,23 +1,109 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-      xmlns="http://www.w3.org/1999/html">
+<html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Registation pager</title>
+
+    <meta http-equiv="Content-Type " content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale= 1.0, minimum-scale=1.0">
+    <script type="text/javascript"
+            th:src="@{https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js}"></script>
+    <script type="text/javascript"
+            th:src="@{https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js}"></script>
+
+    <title>Registration page</title>
+    <link rel="stylesheet " type="text/css"
+          th:href="@{https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css}"
+          crossorigin="anonymous"/>
 </head>
 <body>
-<h1>Regitration</h1>
-<!--/*@thymesVar id="customer" type=""*/-->
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#buttonCanel").on("click", function () {
+            window.location = "[[@{/main}]]"
+        })
+    });
 
-        <form th:action="@{/register}" method="post">
-            <label>Name</label>
-            <input type="text" name="name"/><br/>
-            <label >Email:</label>
-            <input type="text" name="email"/><br/>
-            <label>Phone number:</label>
-            <input type="text" name="phoneNumber"/><br/>
-            <button type="submit">Зарегать себя</button>
-        </form>
+    function checkEmailUnique(form) {
+        url = "[[@{/customer/check_email}]]";
+        customerEmail = $("#email").val();
+        csrfValue = $("input[name='_csrf']").val();
+        params = {email: customerEmail, _csrf: csrfValue};
 
-    </body>
+        $.post(url, params, function (response) {
+            if (response == "ok") {
+                form.submit();
+            } else if (response == "duplicated") {
+                showDialog("Warning", "This email already is used.. " + customerEmail)
+                alert("Another Customer have this" + customerEmail);
+            }
+        });
+        return false;
+    }
+
+    function showDialog(title, message) {
+        $("#modalTitle").text(title);
+        $("#modalBody").text(message);
+        $("#modalDialog").modal();
+    }
+
+
+</script>
+<br>
+<h1>Log in</h1>
+<br/>
+<h2>Please, enter your login and password</h2>
+</br>
+
+<div th:if="${loginLocked}" class="aler alert-danger"> Account locked due multiple incorrect login attempts</div>
+<form method="POST" th:action="@{/register/login}" th:object="${customer}" style="max-width: 600px; margin: 0 auto"
+      onclick=return checkEmailUnique(this);>
+    <div class="border border-secondary rounded p-3">
+        <div class="form-group-row">
+
+            <label class="col-sm-4 col-form-label">Name:</label>
+            <input type="text" name="name" th:field="*{name}" class="form-control" placeholder="Введите имя" required
+                   minlength="2" maxlength="45"/></br>
+            <label class="col-sm-4 col-form-label">Password:</label>
+            <input type="text" name="password" th:field="*{password}" class="form-control"
+                   placeholder="Введите пароль"/></br>
+            <label class="col-sm-5 col-form-label">Email:</label>
+            <input type="text" name="email" th:field="*{email}" class="form-control" placeholder="Введите email"
+                   required minlength="8" maxlength="128"/></br>
+        </div>
+    </div>
+    <div>
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="exampleCheck1"/>
+            <label class="font-weight-bold" for="exampleCheck1">Remember me</label>
+        </div>
+        <div class="text-center">
+                <span>
+            <button type="submit" class="btn btn-primary">Зарегать себя</button>
+                    <button type="submit" class="bt btn-secondary" id="buttonCanel">Отмена</button>
+                    </span>
+        </div>
+    </div>
+</form>
+<div class="modal fade  text-center" id="modalDialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modalTitle">Warning</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div class="modal-body">
+                    <span id="modalBody"></span>>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+                <div>&nbsp;</div>
+                <div>
+                    or<a th:href="@{/forgot_password}">Forgot password</a>
+                </div>
+                <div>&nbsp;</div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
 </html>
